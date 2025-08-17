@@ -53,6 +53,50 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async signIn({ user, account, profile }) {
+      const existingUser = await prisma.user.findUnique({
+        where: { email: user.email! },
+      });
+
+      if (!account) {
+        return false;
+      }
+
+      if (existingUser) {
+        await prisma.account.upsert({
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+            },
+          },
+          update: {
+            access_token: account.access_token,
+            token_type: account.token_type,
+          },
+          create: {
+            userId: existingUser.id,
+            type: account.type,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            access_token: account.access_token,
+            token_type: account.token_type,
+          },
+        });
+        await prisma.user.update({
+          where: {
+            id: existingUser.id,
+          },
+          data: {
+            image: user.image,
+          },
+        });
+      }
+
+      return true;
+    },
+  },
   pages: {
     signIn: "/sign-up",
   },
