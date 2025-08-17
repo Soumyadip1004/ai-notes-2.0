@@ -1,4 +1,5 @@
 import AuthForm from "@/components/auth-form";
+import GithubForm from "@/components/github-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { BsGithub, BsGoogle } from "react-icons/bs";
+import { BsGoogle } from "react-icons/bs";
 
 export default function LoginPage() {
   return (
@@ -25,13 +26,10 @@ export default function LoginPage() {
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
                 <Button variant="outline" className="w-full">
-                  <BsGoogle/>
+                  <BsGoogle />
                   Continue with Google
                 </Button>
-                <Button variant="outline" className="w-full">
-                  <BsGithub/>
-                  Continue with Github
-                </Button>
+                <GithubForm />
               </div>
               <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                 <span className="bg-card text-muted-foreground relative z-10 px-2">
@@ -39,7 +37,7 @@ export default function LoginPage() {
                 </span>
               </div>
 
-              <AuthForm />
+              <AuthForm type="login" />
 
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}

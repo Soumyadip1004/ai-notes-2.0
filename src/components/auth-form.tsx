@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,6 +14,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { useTransition } from "react";
+import {
+  loginWithCredentialsAction,
+  signUpWithCredentialsAction,
+} from "@/actions/auth";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   name: z
@@ -35,10 +41,16 @@ const formSchema = z.object({
 });
 
 type AuthFormProps = {
-  isLoginForm?: boolean;
+  type: "login" | "sign-up";
 };
 
-export default function AuthForm({ isLoginForm = true }: AuthFormProps) {
+export default function AuthForm({ type }: AuthFormProps) {
+  const isLoginForm = type === "login";
+
+  const [isPending, startTransition] = useTransition();
+
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,26 +60,49 @@ export default function AuthForm({ isLoginForm = true }: AuthFormProps) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>,
-      );
-    } catch (error) {
-      console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
-    }
+  async function handleSubmit(formData: FormData) {
+    startTransition(async () => {
+      const name = formData.get("name") as string;
+      const email = formData.get("email") as string;
+      const password = formData.get("password") as string;
+
+      let errorMessage;
+      let title;
+      let description;
+
+      if (isLoginForm) {
+        errorMessage = (await loginWithCredentialsAction(email, password))
+          .errorMessage;
+        title = "Logged In";
+        description = "You have been successfully logged in";
+      } else {
+        errorMessage = (
+          await signUpWithCredentialsAction(name, email, password)
+        ).errorMessage;
+        title = "Signed Up";
+        description = "You have been successfully signed up";
+      }
+
+      if (!errorMessage) {
+        toast.success(title, {
+          description: description,
+        });
+        if (isLoginForm) {
+          router.replace("/");
+        } else {
+          router.replace("/login");
+        }
+      } else {
+        toast.error("Error", {
+          description: errorMessage,
+        });
+      }
+    });
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full space-y-4"
-      >
+      <form action={handleSubmit} className="w-full space-y-4">
         {!isLoginForm && (
           <FormField
             control={form.control}
@@ -80,6 +115,7 @@ export default function AuthForm({ isLoginForm = true }: AuthFormProps) {
                     placeholder="Enter Your Full Name"
                     type="text"
                     {...field}
+                    disabled={isPending}
                   />
                 </FormControl>
 
@@ -96,7 +132,12 @@ export default function AuthForm({ isLoginForm = true }: AuthFormProps) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Enter Your Email" type="email" {...field} />
+                <Input
+                  placeholder="Enter Your Email"
+                  type="email"
+                  {...field}
+                  disabled={isPending}
+                />
               </FormControl>
 
               <FormMessage />
@@ -111,7 +152,11 @@ export default function AuthForm({ isLoginForm = true }: AuthFormProps) {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="Enter your password" {...field} />
+                <PasswordInput
+                  placeholder="Enter your password"
+                  {...field}
+                  disabled={isPending}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -119,7 +164,13 @@ export default function AuthForm({ isLoginForm = true }: AuthFormProps) {
         />
 
         <Button type="submit" className="w-full">
-          {isLoginForm ? "Login" : "Sign Up"}
+          {isPending ? (
+            <Loader2 className="animate-spin" />
+          ) : isLoginForm ? (
+            "Login"
+          ) : (
+            "Sign Up"
+          )}
         </Button>
       </form>
     </Form>
