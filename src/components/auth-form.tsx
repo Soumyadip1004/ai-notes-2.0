@@ -60,11 +60,9 @@ export default function AuthForm({ type }: AuthFormProps) {
     },
   });
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(values: z.infer<typeof formSchema>) {
     startTransition(async () => {
-      const name = formData.get("name") as string;
-      const email = formData.get("email") as string;
-      const password = formData.get("password") as string;
+      const { name, email, password } = values;
 
       let errorMessage;
       let title;
@@ -88,7 +86,7 @@ export default function AuthForm({ type }: AuthFormProps) {
           description: description,
         });
         if (isLoginForm) {
-          router.replace("/");
+          router.replace("/dashboard");
         } else {
           router.replace("/login");
         }
@@ -102,7 +100,10 @@ export default function AuthForm({ type }: AuthFormProps) {
 
   return (
     <Form {...form}>
-      <form action={handleSubmit} className="w-full space-y-4">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="w-full space-y-4"
+      >
         {!isLoginForm && (
           <FormField
             control={form.control}
