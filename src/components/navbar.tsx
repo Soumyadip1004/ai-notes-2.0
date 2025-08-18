@@ -2,9 +2,13 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import Header from "./header";
+import { auth } from "@/lib/auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function Navbar() {
-  const isUser = null;
+export default async function Navbar() {
+  const session = await auth();
+
+  const user = session?.user;
 
   return (
     <Header>
@@ -22,8 +26,20 @@ export default function Navbar() {
       </Link>
 
       <div className="flex items-center gap-4">
-        {isUser ? (
-          <Button className="rounded-[8px]">Logout</Button>
+        {user ? (
+          <>
+            <Button className="rounded-[8px]" asChild>
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
+
+            <Avatar>
+              <AvatarImage src={user.image as string} />
+              <AvatarFallback>
+                {user.name?.split(" ")[0].at(0)?.toUpperCase()}
+                {user.name?.split(" ")[1].at(0)?.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </>
         ) : (
           <>
             <Button
