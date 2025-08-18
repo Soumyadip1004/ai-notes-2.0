@@ -1,0 +1,15 @@
+
+/* Changes for dark mode */
+.bn-container[data-theming-css-variables-demo][data-color-scheme="dark"] {
+  --bn-colors-editor-background: var(--color-background);
+} 
+
+.bn-container[data-theming-css-variables-demo] .bn-suggestion-menu-item {
+  margin-top: 4px;
+}
+
+.bn-container[data-theming-css-variables-demo] .bn-suggestion-menu {
+  max-height: 500px;
+  scale: 0.8;
+  transform-origin: top left;
+}
