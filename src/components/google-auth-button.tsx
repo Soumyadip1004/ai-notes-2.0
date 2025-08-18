@@ -1,22 +1,24 @@
 "use client";
 
-import { BsGithub } from "react-icons/bs";
+import { BsGoogle } from "react-icons/bs";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 
-export default function GithubForm() {
+export default function GoogleAuthButton() {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSignIn() {
     setIsLoading(true);
     try {
-      await signIn("github", { redirectTo: "/dashboard" });
+      await signIn("google", { redirectTo: "/dashboard" });
+      console.log("google auth");
+      
     } catch (error) {
       toast.error("Error", {
-        description: "Failed to sign in with GitHub",
+        description: "Failed to sign in with Google",
       });
     } finally {
       setIsLoading(false);
@@ -34,8 +36,8 @@ export default function GithubForm() {
         <Loader2 className="animate-spin" />
       ) : (
         <>
-          <BsGithub />
-          Continue with Github
+          <BsGoogle />
+          Continue with Google
         </>
       )}
     </Button>

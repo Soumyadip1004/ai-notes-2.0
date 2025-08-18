@@ -1,5 +1,5 @@
 import AuthForm from "@/components/auth-form";
-import GithubForm from "@/components/github-form";
+import GithubForm from "@/components/github-auth-button";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,7 +31,7 @@ export default function SignUpPage() {
                     Continue with Google
                   </Button>
                 </form>
-                <GithubForm/>
+                <GithubForm />
               </div>
               <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                 <span className="bg-card text-muted-foreground relative z-10 px-2">
