@@ -1,14 +1,11 @@
-import LogoutButton from "@/components/logout-button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-
-
-
-export default function DashboardPage() {
-
+export default function Page() {
   return (
-    <div>
-      DashboardPage
-      <LogoutButton/>
-    </div>
+    <ScrollArea className="flex h-[calc(100vh-16px-var(--header-height))]">
+      <div className="h-screen w-full flex items-center justify-center">
+        Dashboard
+      </div>
+    </ScrollArea>
   );
 }

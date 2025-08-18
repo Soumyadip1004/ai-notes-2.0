@@ -28,7 +28,7 @@ export default async function Navbar() {
       <div className="flex items-center gap-4">
         {user ? (
           <>
-            <Button className="rounded-[8px]" asChild>
+            <Button className="rounded-[8px]" asChild variant="outline">
               <Link href="/dashboard">Dashboard</Link>
             </Button>
 
