@@ -30,3 +30,14 @@ export async function handleLogout() {
     });
   }
 }
+
+export function parseJson(text: string) {
+  let parsedBlocks;
+  try {
+    parsedBlocks = text ? JSON.parse(text) : undefined;
+  } catch (e) {
+    console.warn("Failed to parse note text", e);
+    parsedBlocks = undefined;
+  }
+  return parsedBlocks;
+}

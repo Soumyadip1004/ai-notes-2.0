@@ -1,10 +1,3 @@
-"use client";
-
-import * as React from "react";
-import {
-  IconInnerShadowTop,
-} from "@tabler/icons-react";
-
 // import { NavDocuments } from "@/components/nav-documents"
 // import { NavMain } from "@/components/nav-main"
 // import { NavSecondary } from "@/components/nav-secondary"
@@ -20,8 +13,36 @@ import {
 import { NavUser } from "./nav-user";
 import Image from "next/image";
 import Link from "next/link";
+import { NavDocuments } from "./nav-documents";
+import { prisma } from "@/lib/prisma";
+import { getUser } from "@/actions/auth";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type DocumentType = {
+  title: string;
+  id: string;
+};
+
+export async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const user = await getUser();
+
+  let documents: DocumentType[] = [];
+
+  if (user) {
+    documents = await prisma.notes.findMany({
+      where: {
+        authorId: user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        title: true,
+        id: true,
+      },
+    });
+  }
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -41,6 +62,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        {user && <NavDocuments notes={documents} />}
         {/* <NavMain items={data.navMain} />
         <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" /> */}

@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/lib/auth";
+import { auth, signIn } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { handleError } from "@/lib/utils";
 import bcrypt from "bcrypt";
@@ -71,4 +71,28 @@ export async function signUpWithCredentialsAction(
   } catch (error) {
     return handleError(error);
   }
+}
+
+export async function getUser() {
+  const session = await auth();
+
+  const userEmail = session?.user?.email as string;
+
+  const user = prisma.user.findUnique({
+    where: {
+      email: userEmail,
+    },
+    select: {
+      id: true,
+      email: true,
+      image: true,
+      name: true,
+    },
+  });
+
+  if (!user) {
+    return null;
+  }
+
+  return user;
 }

@@ -6,36 +6,73 @@ import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import "./styles.css";
 
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { debounceTimeout } from "@/lib/constants";
+import { updateNotesAction } from "@/actions/notes";
+import { parseJson } from "@/lib/utils";
+import { useNote } from "@/hooks/use-note";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo } from "react";
 
-const myMarkdown = "hello \n # hello";
+type EditorImplProps = {
+  title: string;
+  noteId: string;
+  startingNoteText: string;
+};
 
-export default function EditorImpl() {
-  const editor = useCreateBlockNote();
-  const { theme, systemTheme } = useTheme();
+let updateTimeout: NodeJS.Timeout;
 
-  const [note, setNote] = useState("");
+export default function EditorImpl({
+  title,
+  noteId,
+  startingNoteText,
+}: EditorImplProps) {
+  const noteIdParam = useSearchParams().get("noteId") || "";
+  const { note, setNote } = useNote();
 
-  const currentTheme = theme === "system" ? systemTheme : theme;
+  // ✅ Always memoize parsed content
+  const parsedBlocks = useMemo(
+    () => parseJson(note.text || startingNoteText),
+    [note.text, startingNoteText],
+  );
 
-  useEditorChange(async (editor) => {
-    const markdown = await editor.blocksToMarkdownLossy(editor.document);
+  // ✅ Always create editor once
+  const editor = useCreateBlockNote({
+    initialContent: parsedBlocks,
+  });
 
-    setNote(markdown);
-  }, editor);
+  // ✅ Keep noteText synced
+  useEffect(() => {
+    if (noteIdParam === noteId) {
+      setNote({ ...note, text: startingNoteText, title: title });
+    }
+  }, [startingNoteText, noteIdParam, noteId, setNote, title]);
 
   useEffect(() => {
-    async function loadMarkdown() {
-      const blocks = await editor.tryParseMarkdownToBlocks(myMarkdown);
-      editor.replaceBlocks(editor.document, blocks);
+    if (note.text) {
+      const parsed = parseJson(note.text);
+      if (parsed) {
+        editor.replaceBlocks(editor.document, parsed);
+      }
     }
-    loadMarkdown();
-  }, [editor]);
+  }, [note.text, editor]);
+
+  // ✅ Theme
+  const { theme, systemTheme } = useTheme();
+  const currentTheme = theme === "system" ? systemTheme : theme;
+
+  // ✅ Save on change
+  useEditorChange(async (editor) => {
+    const savedBlocks = JSON.stringify(editor.document);
+    clearTimeout(updateTimeout);
+    updateTimeout = setTimeout(() => {
+      updateNotesAction(noteId, savedBlocks);
+    }, debounceTimeout);
+  }, editor);
 
   return (
     <BlockNoteView
-      //@ts-expect-error Type 'string | undefined' is not assignable to type '"dark" | "light" | Partial<{ colors: Partial<{ editor: Partial<{ text: string; background: string; }>;
+      // @ts-expect-error blocknote types mismatch
       theme={currentTheme}
       editor={editor}
       data-theming-css-variables-demo
