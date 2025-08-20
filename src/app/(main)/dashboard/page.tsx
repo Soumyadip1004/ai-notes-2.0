@@ -4,9 +4,18 @@ import Editor from "@/components/editor";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { prisma } from "@/lib/prisma";
 import { parseJson } from "@/lib/utils";
+import { PartialBlock } from "@blocknote/core";
 
 type DashboardPageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+const defaultBlock: PartialBlock = {
+  id: crypto.randomUUID(),
+  type: "paragraph",
+  props: {},
+  content: [],
+  children: [],
 };
 
 export default async function DashboardPage({
@@ -48,7 +57,7 @@ export default async function DashboardPage({
         <Editor
           title={note.title}
           noteId={noteId}
-          startingNoteText={startingNoteText ?? []}
+          startingNoteText={startingNoteText || [defaultBlock]}
         />
       </div>
     </ScrollArea>

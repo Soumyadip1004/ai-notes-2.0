@@ -31,7 +31,7 @@ export default function Editor({
   const { note, setNote } = useNote();
 
   const editor = useCreateBlockNote({
-    initialContent: note.text || [],
+    initialContent: note.text,
   });
 
   useEffect(() => {
