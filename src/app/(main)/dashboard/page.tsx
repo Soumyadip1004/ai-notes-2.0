@@ -43,7 +43,7 @@ export default async function DashboardPage({
       <div className="flex h-[calc(100vh-16px-var(--header-height))] w-full items-center justify-center">
         <p className="text-ring flex items-center gap-2">
           Document not found.
-          <CreateNewNote className="text-muted-foreground text-sm underline bg-transparent font-normal w-20 hover:bg-transparent hover:text-foreground"/>
+          <CreateNewNote className="text-muted-foreground hover:text-foreground w-20 bg-transparent text-sm font-normal underline shadow-none hover:bg-transparent" />
         </p>
       </div>
     );
