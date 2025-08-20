@@ -91,7 +91,7 @@ export function NavDocuments({
             </SidebarMenuItem>
           ))}
         </ScrollArea>
-        {notes.length > NOTES_DISPLAY_COUNT && (
+        {localNotes.length > NOTES_DISPLAY_COUNT && (
           <SidebarMenuItem>
             <SidebarMenuButton
               className="text-sidebar-foreground/70"
