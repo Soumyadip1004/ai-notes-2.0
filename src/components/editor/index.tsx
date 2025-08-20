@@ -4,6 +4,6 @@
 import dynamic from "next/dynamic";
 
 // ✅ Prevent SSR (no "document is not defined")
-const Editor = dynamic(() => import("./editor-impl"), { ssr: false });
+const Editor = dynamic(() => import("./editor"), { ssr: false });
 
 export default Editor;

@@ -9,53 +9,37 @@ import "./styles.css";
 import { useTheme } from "next-themes";
 import { debounceTimeout } from "@/lib/constants";
 import { updateNotesAction } from "@/actions/notes";
-import { parseJson } from "@/lib/utils";
 import { useNote } from "@/hooks/use-note";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
+import { PartialBlock } from "@blocknote/core";
 
-type EditorImplProps = {
+type EditorProps = {
   title: string;
   noteId: string;
-  startingNoteText: string;
+  startingNoteText: PartialBlock[];
 };
 
 let updateTimeout: NodeJS.Timeout;
 
-export default function EditorImpl({
+export default function Editor({
   title,
   noteId,
   startingNoteText,
-}: EditorImplProps) {
+}: EditorProps) {
   const noteIdParam = useSearchParams().get("noteId") || "";
   const { note, setNote } = useNote();
 
-  // ✅ Always memoize parsed content
-  const parsedBlocks = useMemo(
-    () => parseJson(note.text || startingNoteText),
-    [note.text, startingNoteText],
-  );
-
-  // ✅ Always create editor once
   const editor = useCreateBlockNote({
-    initialContent: parsedBlocks,
+    initialContent: note.text,
   });
 
-  // ✅ Keep noteText synced
   useEffect(() => {
     if (noteIdParam === noteId) {
-      setNote({ ...note, text: startingNoteText, title: title });
+      setNote((prev) => ({ ...prev, text: startingNoteText, title: title }));
+      editor.replaceBlocks(editor.document, startingNoteText);
     }
-  }, [startingNoteText, noteIdParam, noteId, setNote, title]);
-
-  useEffect(() => {
-    if (note.text) {
-      const parsed = parseJson(note.text);
-      if (parsed) {
-        editor.replaceBlocks(editor.document, parsed);
-      }
-    }
-  }, [note.text, editor]);
+  }, [startingNoteText, noteIdParam, noteId, setNote, editor, title]);
 
   // ✅ Theme
   const { theme, systemTheme } = useTheme();
@@ -72,8 +56,7 @@ export default function EditorImpl({
 
   return (
     <BlockNoteView
-      // @ts-expect-error blocknote types mismatch
-      theme={currentTheme}
+      theme={currentTheme as "light" | "dark"}
       editor={editor}
       data-theming-css-variables-demo
     />

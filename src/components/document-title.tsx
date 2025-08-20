@@ -2,7 +2,7 @@
 
 import { useNote } from "@/hooks/use-note";
 import { Input } from "./ui/input";
-import { ChangeEvent } from "react";
+import { ChangeEvent, MouseEvent } from "react";
 import { debounceTimeout } from "@/lib/constants";
 import { updateNotesTitleAction } from "@/actions/notes";
 import { useSearchParams } from "next/navigation";
@@ -23,11 +23,17 @@ export default function DocumentTitle() {
       updateNotesTitleAction(noteId, text);
     }, debounceTimeout);
   }
+
+  function handleClick(e: MouseEvent<HTMLInputElement>) {
+    e.currentTarget.select();
+  }
+
   return (
     <Input
       value={note.title}
       onChange={handleOnChange}
-      className="max-w-2xs border-0 border-none bg-transparent text-base font-medium ring-0 outline-none focus:outline-none focus-visible:border-0 focus-visible:ring-0 dark:bg-transparent"
+      onClick={handleClick}
+      className="max-w-2xs border-0 border-none bg-transparent text-base font-medium shadow-none ring-0 outline-none focus:outline-none focus-visible:border-0 focus-visible:ring-0 dark:bg-transparent"
       placeholder="New Document"
     />
   );

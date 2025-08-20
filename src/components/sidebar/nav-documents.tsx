@@ -4,8 +4,6 @@ import {
   IconDots,
   IconFolder,
   IconShare3,
-  IconTrash,
-  type Icon,
 } from "@tabler/icons-react";
 
 import {
@@ -24,25 +22,42 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { NOTES_DISPLAY_COUNT } from "@/lib/constants";
 import SelectNoteButton from "../select-note-button";
+import DeleteNoteButton from "../delete-note-button";
 
-export function NavDocuments({ notes }: { notes: { title: string, id: string }[] }) {
+export function NavDocuments({
+  notes,
+}: {
+  notes: { title: string; id: string }[];
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const { isMobile } = useSidebar();
 
-  const newNotes = isOpen ? notes : notes.slice(0, NOTES_DISPLAY_COUNT);
+  const [localNotes, setLocalNotes] = useState(notes);
+
+  useEffect(() => {
+    setLocalNotes(notes);
+  }, [notes]);
+
+  const visibleNotes = isOpen
+    ? localNotes
+    : localNotes.slice(0, NOTES_DISPLAY_COUNT);
+
+  function deleteLocalNotes(noteId: string) {
+    setLocalNotes((prev) => prev.filter((note) => note.id != noteId));
+  }
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Documents</SidebarGroupLabel>
       <SidebarMenu>
         <ScrollArea className="max-h-[500px]">
-          {newNotes.map((note) => (
+          {visibleNotes.map((note) => (
             <SidebarMenuItem key={note.id}>
-              <SelectNoteButton note={note}/>
+              <SelectNoteButton note={note} />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuAction
@@ -67,10 +82,10 @@ export function NavDocuments({ notes }: { notes: { title: string, id: string }[]
                     <span>Share</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem variant="destructive">
-                    <IconTrash />
-                    <span>Delete</span>
-                  </DropdownMenuItem>
+                  <DeleteNoteButton
+                    noteId={note.id}
+                    deleteLocalNotes={deleteLocalNotes}
+                  />
                 </DropdownMenuContent>
               </DropdownMenu>
             </SidebarMenuItem>
