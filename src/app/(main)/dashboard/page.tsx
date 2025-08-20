@@ -1,4 +1,5 @@
 import { getUser } from "@/actions/auth";
+import CreateNewNote from "@/components/create-new-note";
 import Editor from "@/components/editor";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { prisma } from "@/lib/prisma";
@@ -33,9 +34,7 @@ export default async function DashboardPage({
       <div className="flex h-[calc(100vh-16px-var(--header-height))] w-full items-center justify-center">
         <p className="text-ring flex items-center gap-2">
           Document not found.
-          <span className="text-muted-foreground text-sm underline">
-            Create new
-          </span>
+          <CreateNewNote className="text-muted-foreground text-sm underline bg-transparent font-normal w-20 hover:bg-transparent hover:text-foreground"/>
         </p>
       </div>
     );
