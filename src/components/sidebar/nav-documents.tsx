@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  IconDots,
-  IconFolder,
-  IconShare3,
-} from "@tabler/icons-react";
+import { IconDots, IconFolder, IconShare3 } from "@tabler/icons-react";
 
 import {
   DropdownMenu,
@@ -15,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
+  SidebarGroupAction,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
@@ -27,6 +24,8 @@ import { ScrollArea } from "../ui/scroll-area";
 import { NOTES_DISPLAY_COUNT } from "@/lib/constants";
 import SelectNoteButton from "../select-note-button";
 import DeleteNoteButton from "../delete-note-button";
+import { Plus } from "lucide-react";
+import CreateNewNote from "../create-new-note";
 
 export function NavDocuments({
   notes,
@@ -53,6 +52,9 @@ export function NavDocuments({
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Documents</SidebarGroupLabel>
+      <SidebarGroupAction title="Add Document" asChild>
+        <CreateNewNote icon={<Plus />} />
+      </SidebarGroupAction>
       <SidebarMenu>
         <ScrollArea className="max-h-[500px]">
           {visibleNotes.map((note) => (

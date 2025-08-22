@@ -1,7 +1,7 @@
 "use client";
 import { Loader2 } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { VariantProps } from "class-variance-authority";
@@ -10,11 +10,14 @@ import { useRouter } from "next/navigation";
 
 export default function CreateNewNote({
   className,
+  icon,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    icon?: ReactNode;
   }) {
+  const Comp = icon ? "span" : Button;
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -37,13 +40,19 @@ export default function CreateNewNote({
   }
 
   return (
-    <Button
+    <Comp
       onClick={handleCreateNote}
       className={cn("w-24", className)}
       disabled={isLoading}
       {...props}
     >
-      {isLoading ? <Loader2 className="animate-spin" /> : "Create New"}
-    </Button>
+      {icon ? (
+        icon
+      ) : isLoading ? (
+        <Loader2 className="animate-spin" />
+      ) : (
+        "Create New"
+      )}
+    </Comp>
   );
 }
