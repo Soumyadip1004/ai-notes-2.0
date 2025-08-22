@@ -14,7 +14,6 @@ export default function GoogleAuthButton() {
     setIsLoading(true);
     try {
       await signIn("google", { redirectTo: "/dashboard" });
-      console.log("google auth");
       
     } catch (error) {
       toast.error("Error", {
