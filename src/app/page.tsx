@@ -5,7 +5,9 @@ export default function HomePage() {
     <div className="min-h-screen w-full">
       <Navbar />
 
-      <main className="flex h-screen w-full justify-center items-center">HomePage</main>
+      <main className="flex h-screen w-full items-center justify-center">
+        HomePage
+      </main>
     </div>
   );
 }
