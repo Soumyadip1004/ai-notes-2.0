@@ -13,9 +13,9 @@ import {
 import { NavUser } from "./nav-user";
 import Image from "next/image";
 import Link from "next/link";
-import { NavDocuments } from "./nav-documents";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/actions/auth";
+import NavContent from "./nav-content";
 
 type DocumentType = {
   title: string;
@@ -61,12 +61,7 @@ export async function AppSidebar({
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        {user && <NavDocuments notes={documents} />}
-        {/* <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
-      </SidebarContent>
+      <NavContent documents={documents}/>
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>

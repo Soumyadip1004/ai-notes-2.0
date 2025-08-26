@@ -10,8 +10,6 @@ export function cn(...inputs: ClassValue[]) {
 
 export function handleError(error: unknown) {
   if (error instanceof CredentialsSignin) {
-    console.table(error);
-
     return { errorMessage: "Invalid Credentials" };
   }
   if (error instanceof Error) {

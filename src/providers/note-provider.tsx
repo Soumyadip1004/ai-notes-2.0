@@ -4,7 +4,7 @@ import { PartialBlock } from "@blocknote/core";
 import { createContext, ReactNode, useState } from "react";
 
 const emptyBlock: PartialBlock = {
-  id: crypto.randomUUID(), // or any unique string
+  id: "", // or any unique string
   type: "paragraph",
   props: {},
   content: [],

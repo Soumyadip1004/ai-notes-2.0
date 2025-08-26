@@ -19,7 +19,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { NOTES_DISPLAY_COUNT } from "@/lib/constants";
 import SelectNoteButton from "../select-note-button";
@@ -29,25 +29,15 @@ import CreateNewNote from "../create-new-note";
 
 export function NavDocuments({
   notes,
+  deleteLocalNotes,
 }: {
   notes: { title: string; id: string }[];
+  deleteLocalNotes: (noteId: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const { isMobile } = useSidebar();
 
-  const [localNotes, setLocalNotes] = useState(notes);
-
-  useEffect(() => {
-    setLocalNotes(notes);
-  }, [notes]);
-
-  const visibleNotes = isOpen
-    ? localNotes
-    : localNotes.slice(0, NOTES_DISPLAY_COUNT);
-
-  function deleteLocalNotes(noteId: string) {
-    setLocalNotes((prev) => prev.filter((note) => note.id != noteId));
-  }
+  const visibleNotes = isOpen ? notes : notes.slice(0, NOTES_DISPLAY_COUNT);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -93,7 +83,7 @@ export function NavDocuments({
             </SidebarMenuItem>
           ))}
         </ScrollArea>
-        {localNotes.length > NOTES_DISPLAY_COUNT && (
+        {notes.length > NOTES_DISPLAY_COUNT && (
           <SidebarMenuItem>
             <SidebarMenuButton
               className="text-sidebar-foreground/70"
