@@ -3,6 +3,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import ThemeToggle from "./theme-toggle";
 import DocumentTitle from "./document-title";
 import CreateNewNote from "./create-new-note";
+import AiChatButton from "./ai-chat-button";
 export async function SiteHeader() {
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -16,6 +17,7 @@ export async function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
           <CreateNewNote variant="ghost" />
+          <AiChatButton/>
         </div>
       </div>
     </header>
